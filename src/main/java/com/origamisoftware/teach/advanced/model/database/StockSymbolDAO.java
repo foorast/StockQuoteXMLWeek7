@@ -1,5 +1,7 @@
 package com.origamisoftware.teach.advanced.model.database;
 
+import com.origamisoftware.teach.advanced.xml.Stock;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,6 +16,11 @@ import javax.persistence.Table;
 public class StockSymbolDAO implements DatabasesAccessObject {
     private int id;
     private String symbol;
+
+
+    public StockSymbolDAO(Stock stock){
+        this.symbol = stock.getSymbol();
+    }
 
     @Id
     @Column(name = "id", nullable = false, insertable = true, updatable = true)
