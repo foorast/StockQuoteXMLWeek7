@@ -1,5 +1,7 @@
 package com.origamisoftware.teach.advanced.model.database;
 
+import com.origamisoftware.teach.advanced.xml.Stock;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,6 +12,9 @@ import javax.persistence.Table;
 import javax.validation.constraints.Digits;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Models the quote table
@@ -21,6 +26,16 @@ public class QuoteDAO implements DatabasesAccessObject {
     private Timestamp time;
     private BigDecimal price;
     private StockSymbolDAO stockSymbolBySymbolId;
+
+    public QuoteDAO(){
+
+    }
+
+    public QuoteDAO(Stock stock){
+        this.stockSymbolBySymbolId = new StockSymbolDAO(stock);
+        this.time = convertStringToTimestamp(stock.getTime());
+        this.price = convertStringToBigDecimal(stock.getPrice());
+    }
 
     @Id
     @Column(name = "id",  nullable = false, insertable = true, updatable = true)
@@ -83,5 +98,28 @@ public class QuoteDAO implements DatabasesAccessObject {
 
     public void setStockSymbolBySymbolId(StockSymbolDAO stockSymbolBySymbolId) {
         this.stockSymbolBySymbolId = stockSymbolBySymbolId;
+    }
+
+    public static Timestamp convertStringToTimestamp(String dateEntered){
+        /**
+         * Create a new instance of SimpleDateFormat that will be used to
+         * parse the string arguments to obtain desired start and end dates
+         */
+        SimpleDateFormat simpleDateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = new Date();
+        try {
+            date = simpleDateFormatter.parse(dateEntered);
+        } catch (ParseException ex) {
+            System.out.println("Incorrect format for date. System will exit.");
+            System.exit(1);
+        }
+        Timestamp convertedDate = new Timestamp(date.getTime());
+
+        return convertedDate;
+    }
+
+    public static BigDecimal convertStringToBigDecimal(String priceEntered){
+
+        return new BigDecimal(priceEntered);
     }
 }
